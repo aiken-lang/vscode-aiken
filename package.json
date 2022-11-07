@@ -37,7 +37,7 @@
     }
   },
   "activationEvents": [
-    "onLanguage:gleam"
+    "onLanguage:aiken"
   ],
   "main": "./out/extension.js",
   "scripts": {
