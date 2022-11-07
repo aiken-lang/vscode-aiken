@@ -1,0 +1,25 @@
+{
+  "name": "txpipe",
+  "displayName": "aiken",
+  "description": "Aiken support for VS Code",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.73.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "aiken",
+      "aliases": ["aiken", "aiken"],
+      "extensions": [".ak"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "aiken",
+      "scopeName": "source.aiken",
+      "path": "./syntaxes/aiken.tmLanguage.json"
+    }]
+  }
+}
