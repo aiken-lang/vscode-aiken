@@ -1,32 +1,157 @@
 {
-	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "aiken",
-	"patterns": [
-		{
-			"include": "#keywords"
-		},
-		{
-			"include": "#strings"
-		}
-	],
-	"repository": {
-		"keywords": {
-			"patterns": [{
-				"name": "keyword.control.aiken",
-				"match": "\\b(if|while|for|return)\\b"
-			}]
-		},
-		"strings": {
-			"name": "string.quoted.double.aiken",
-			"begin": "\"",
-			"end": "\"",
-			"patterns": [
-				{
-					"name": "constant.character.escape.aiken",
-					"match": "\\\\."
-				}
-			]
-		}
-	},
-	"scopeName": "source.aiken"
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Aiken",
+  "patterns": [
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#constant"
+    },
+    {
+      "include": "#entity"
+    }
+  ],
+  "repository": {
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.aiken",
+          "match": "\\b(if|else|when|is|fn|use|let|pub|type|opaque|const|todo|assert)\\b"
+        },
+        {
+          "name": "keyword.operator.arrow.aiken",
+          "match": "->"
+        },
+        {
+          "name": "keyword.operator.pipe.aiken",
+          "match": "\\|>"
+        },
+        {
+          "name": "keyword.operator.splat.aiken",
+          "match": "\\.\\."
+        },
+        {
+          "name": "keyword.operator.comparison.aiken",
+          "match": "(<=|>=|==|!=|<|>)"
+        },
+        {
+          "name": "keyword.operator.logical.aiken",
+          "match": "(&&|\\|\\|)"
+        },
+        {
+          "name": "keyword.operator.other.aiken",
+          "match": "\\|"
+        },
+        {
+          "name": "keyword.operator.arithmetic.aiken",
+          "match": "(\\+|\\-|/|\\*|%)"
+        },
+        {
+          "name": "keyword.operator.assignment.aiken",
+          "match": "="
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.aiken",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.aiken",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.aiken",
+          "match": "//.*"
+        }
+      ]
+    },
+    "constant": {
+      "patterns": [
+        {
+          "include": "#binary_number"
+        },
+        {
+          "include": "#octal_number"
+        },
+        {
+          "include": "#hexadecimal_number"
+        },
+        {
+          "include": "#decimal_number"
+        },
+        {
+          "include": "#boolean"
+        },
+        {
+          "name": "entity.name.type.aiken",
+          "match": "[[:upper:]][[:word:]]*"
+        }
+      ]
+    },
+    "binary_number": {
+      "name": "constant.numeric.binary.aiken",
+      "match": "\\b0b[0-1]+\\b",
+      "patterns": []
+    },
+    "octal_number": {
+      "name": "constant.numeric.octal.aiken",
+      "match": "\\b0o[0-7]+\\b",
+      "patterns": []
+    },
+    "decimal_number": {
+      "name": "constant.numeric.decimal.aiken",
+      "match": "\\b[[:digit:]][[:digit:]_]*(\\.[[:digit:]]*)?\\b",
+      "patterns": []
+    },
+    "hexadecimal_number": {
+      "name": "constant.numeric.hexadecimal.aiken",
+      "match": "\\b0x[[:xdigit:]]+\\b",
+      "patterns": []
+    },
+    "boolean": {
+      "name": "constant.language.boolean.aiken",
+      "match": "\\b(True|False)\\b",
+      "patterns": []
+    },
+    "entity": {
+      "patterns": [
+        {
+          "begin": "\\b([[:lower:]][[:word:]]*)([[:space:]]*)?\\(",
+          "end": "\\)",
+          "patterns": [
+            {
+              "include": "$self"
+            }
+          ],
+          "captures": {
+            "1": {
+              "name": "entity.name.function.aiken"
+            }
+          }
+        },
+        {
+          "name": "variable.parameter.aiken",
+          "match": "\\b([[:lower:]][[:word:]]*):\\s"
+        },
+        {
+          "name": "entity.name.namespace.aiken",
+          "match": "\\b([[:lower:]][[:word:]]*):"
+        }
+      ]
+    }
+  },
+  "scopeName": "source.aiken"
 }
