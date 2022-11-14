@@ -1,9 +1,9 @@
-# Change Log
+# Changelog
 
-All notable changes to the "txpipe" extension will be documented in this file.
+## [v1.0.0] - 2022-11-14
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+Initial release
 
-## [Unreleased]
+### Added
 
-- Initial release
+- formatting via LSP
