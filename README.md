@@ -1,6 +1,6 @@
 # VS Code Aiken
 
-[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/Aiken.aiken?label=Visual%20Studio%20Marketplace&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=Aiken.aiken)
+[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/TxPipe.aiken?label=Visual%20Studio%20Marketplace&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=TxPipe.aiken)
 
 Aiken language support for Visual Studio Code
 
