@@ -3,10 +3,10 @@
   "name": "Aiken",
   "patterns": [
     {
-      "include": "#keywords"
+      "include": "#comments"
     },
     {
-      "include": "#comments"
+      "include": "#keywords"
     },
     {
       "include": "#strings"
@@ -23,7 +23,7 @@
       "patterns": [
         {
           "name": "keyword.control.aiken",
-          "match": "\\b(if|else|when|is|fn|use|let|pub|type|opaque|const|todo|assert)\\b"
+          "match": "\\b(if|else|when|is|fn|use|let|pub|type|opaque|const|todo|assert|check|test)\\b"
         },
         {
           "name": "keyword.operator.arrow.aiken",
@@ -73,8 +73,8 @@
     "comments": {
       "patterns": [
         {
-          "name": "comment.line.aiken",
-          "match": "//.*"
+          "name": "comment.line.gleam",
+          "match": "\/\/.*"
         }
       ]
     },
