@@ -1,6 +1,10 @@
 # Changelog
 
-## [next] - 2022-MM-DD
+## [v1.0.4] - 2022-12-23
+
+### Changed
+
+- update some keywords
 
 ## [v1.0.3] - 2022-12-06
 
