@@ -1,5 +1,7 @@
 # Changelog
 
+## [next] - 2022-MM-DD
+
 ## [v1.0.4] - 2022-12-23
 
 ### Changed
