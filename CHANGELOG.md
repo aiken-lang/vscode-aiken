@@ -1,6 +1,15 @@
 # Changelog
 
-## [next] - 2022-MM-DD
+## [v1.0.5] - 2022-02-16
+
+### Changes
+
+- added `expect` as keyword
+- added `validator` as keyword
+
+### Removed
+
+- removed `assert` as keyword
 
 ## [v1.0.4] - 2022-12-23
 

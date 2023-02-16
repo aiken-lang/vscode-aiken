@@ -2,7 +2,7 @@
   "name": "aiken",
   "displayName": "Aiken",
   "description": "Aiken language support for Visual Studio Code",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "publisher": "txpipe",
   "icon": "images/icon.png",
   "repository": {
