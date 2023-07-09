@@ -2,7 +2,7 @@
   "name": "aiken",
   "displayName": "Aiken",
   "description": "Aiken language support for Visual Studio Code",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "publisher": "txpipe",
   "icon": "images/icon.png",
   "repository": {
@@ -27,10 +27,25 @@
         "extensions": [
           ".ak"
         ],
-        "configuration": "./language-configuration.json",
+        "configuration": "./configs/aiken-configuration.json",
         "icon": {
-          "light": "./images/icon.png",
-          "dark": "./images/icon.png"
+          "light": "./images/aiken.png",
+          "dark": "./images/aiken.png"
+        }
+      },
+      {
+        "id": "uplc",
+        "aliases": [
+          "Untyped Plutus Core",
+          "uplc"
+        ],
+        "extensions": [
+          ".uplc"
+        ],
+        "configuration": "./configs/uplc-configuration.json",
+        "icon": {
+          "light": "./images/plutus.png",
+          "dark": "./images/plutus.png"
         }
       }
     ],
@@ -39,16 +54,25 @@
         "language": "aiken",
         "scopeName": "source.aiken",
         "path": "./syntaxes/aiken.tmLanguage.json"
+      },
+      {
+        "language": "uplc",
+        "scopeName": "source.uplc",
+        "path": "./syntaxes/uplc.tmLanguage.json"
       }
     ],
     "configurationDefaults": {
       "[aiken]": {
         "editor.formatOnSave": true
+      },
+      "[uplc]": {
+        "editor.formatOnSave": true
       }
     }
   },
   "activationEvents": [
-    "onLanguage:aiken"
+    "onLanguage:aiken",
+    "onLanguage:uplc"
   ],
   "main": "./out/extension.js",
   "scripts": {

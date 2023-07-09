@@ -1,6 +1,10 @@
 # Changelog
 
-## [next] - 2023-MM-DD
+## [v1.0.6] - 2023-07-09
+
+### Added
+
+- untyped plutus core support
 
 ## [v1.0.5] - 2023-02-16
 

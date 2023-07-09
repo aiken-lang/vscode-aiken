@@ -1,0 +1,83 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Untyped Plutus Core",
+  "patterns": [
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#constant"
+    },
+    {
+      "include": "#types"
+    },
+    {
+      "include": "#entity"
+    }
+  ],
+  "repository": {
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.uplc",
+          "match": "\\b(program|con|builtin|delay|force|error)\\b"
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.uplc",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.uplc",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "constant": {
+      "patterns": [
+        {
+          "include": "#decimal_number"
+        },
+        {
+          "include": "#boolean"
+        },
+        {
+          "name": "constant.numeric.hexadecimal.uplc",
+          "match": "#[[:xdigit:]]+\\b"
+        }
+      ]
+    },
+    "types": {
+      "name": "entity.name.type.uplc",
+      "match": "\\b(integer|bytestring|bool|unit|string)\\b"
+    },
+    "decimal_number": {
+      "name": "constant.numeric.decimal.uplc",
+      "match": "\\b[[:digit:]][[:digit:]_]*(\\.[[:digit:]]*)?\\b",
+      "patterns": []
+    },
+    "boolean": {
+      "name": "constant.language.boolean.uplc",
+      "match": "\\b(True|False)\\b",
+      "patterns": []
+    },
+    "entity": {
+      "patterns": [
+        {
+          "name": "entity.name.function.uplc",
+          "match": "\\b(addInteger|subtractInteger|multiplyInteger|divideInteger|quotientInteger|remainderInteger|modInteger|equalsInteger|lessThanInteger|lessThanEqualsInteger|appendByteString|consByteString|sliceByteString|lengthOfByteString|indexByteString|equalsByteString|lessThanByteString|lessThanEqualsByteString|sha2_256|sha3_256|blake2b_256|verifyEd25519Signature|verifyEcdsaSecp256k1Signature|verifySchnorrSecp256k1Signature|appendString|equalsString|encodeUtf8|decodeUtf8|ifThenElse|chooseUnit|trace|fstPair|sndPair|chooseList|mkCons|headList|tailList|nullList|chooseData|constrData|mapData|listData|iData|bData|unConstrData|unMapData|unListData|unIData|unBData|equalsData|serialiseData|mkPairData|mkNilData|mkNilPairData)\\b"
+        },
+        {
+          "name": "variable.other.uplc",
+          "match": "\\b([[:lower:]][[:word:]]*)\\b"
+        }
+      ]
+    }
+  },
+  "scopeName": "source.uplc"
+}
