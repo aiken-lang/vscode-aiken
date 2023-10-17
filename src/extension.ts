@@ -17,8 +17,14 @@ export function activate(_context: vscode.ExtensionContext) {
     documentSelector: [{ scheme: "file", language: "aiken" }],
     synchronize: {
       fileEvents: [
-        vscode.workspace.createFileSystemWatcher("**/aiken.toml"),
-        vscode.workspace.createFileSystemWatcher("**/manifest.toml"),
+        vscode.workspace.createFileSystemWatcher(
+          new vscode.RelativePattern(
+            vscode.workspace.workspaceFolders
+              ? vscode.workspace.workspaceFolders[0]
+              : ".",
+            "aiken.toml",
+          ),
+        ),
       ],
     },
   };
@@ -36,7 +42,7 @@ export function activate(_context: vscode.ExtensionContext) {
     "aiken_language_server",
     "Aiken Language Server",
     serverOptions,
-    clientOptions
+    clientOptions,
   );
 
   client.start();
