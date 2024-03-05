@@ -12,21 +12,13 @@
   "engines": {
     "vscode": "^1.52.0"
   },
-  "categories": [
-    "Programming Languages",
-    "Formatters"
-  ],
+  "categories": ["Programming Languages", "Formatters"],
   "contributes": {
     "languages": [
       {
         "id": "aiken",
-        "aliases": [
-          "Aiken",
-          "aiken"
-        ],
-        "extensions": [
-          ".ak"
-        ],
+        "aliases": ["Aiken", "aiken"],
+        "extensions": [".ak"],
         "configuration": "./configs/aiken-configuration.json",
         "icon": {
           "light": "./images/aiken.png",
@@ -35,13 +27,8 @@
       },
       {
         "id": "uplc",
-        "aliases": [
-          "Untyped Plutus Core",
-          "uplc"
-        ],
-        "extensions": [
-          ".uplc"
-        ],
+        "aliases": ["Untyped Plutus Core", "uplc"],
+        "extensions": [".uplc"],
         "configuration": "./configs/uplc-configuration.json",
         "icon": {
           "light": "./images/plutus.png",
@@ -70,10 +57,7 @@
       }
     }
   },
-  "activationEvents": [
-    "onLanguage:aiken",
-    "onLanguage:uplc"
-  ],
+  "activationEvents": ["onLanguage:aiken", "onLanguage:uplc"],
   "main": "./out/extension.js",
   "scripts": {
     "vscode:prepublish": "npm run package",
