@@ -1,5 +1,10 @@
 # Changelog
 
+## [v1.0.9] - 2024-03-05
+
+- added `as` and `via` keywords
+- added latest builtins to uplc language
+
 ## [v1.0.8] - 2023-10-16
 
 ### Fixed
