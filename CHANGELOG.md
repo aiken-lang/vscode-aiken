@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.0.10] - 2024-03-16
+
+- added `<-` to syntax highlighting
+
 ## [v1.0.9] - 2024-03-05
 
 - added `as` and `via` keywords

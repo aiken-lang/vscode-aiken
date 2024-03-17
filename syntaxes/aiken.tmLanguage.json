@@ -30,6 +30,10 @@
           "match": "->"
         },
         {
+          "name": "keyword.operator.back_arrow.aiken",
+          "match": "<-"
+        },
+        {
           "name": "keyword.operator.pipe.aiken",
           "match": "\\|>"
         },
