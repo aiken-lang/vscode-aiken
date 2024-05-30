@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.0.11] - 2024-05-30
+
+- added some keywords to uplc grammar
+
 ## [v1.0.10] - 2024-03-16
 
 - added `<-` to syntax highlighting

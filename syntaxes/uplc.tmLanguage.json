@@ -23,7 +23,7 @@
       "patterns": [
         {
           "name": "keyword.control.uplc",
-          "match": "\\b(program|con|builtin|delay|force|error)\\b"
+          "match": "\\b(program|con|builtin|delay|force|error|lam)\\b"
         }
       ]
     },
@@ -54,7 +54,7 @@
     },
     "types": {
       "name": "entity.name.type.uplc",
-      "match": "\\b(integer|bytestring|bool|unit|string)\\b"
+      "match": "\\b(integer|bytestring|bool|unit|string|list|pair)\\b"
     },
     "decimal_number": {
       "name": "constant.numeric.decimal.uplc",

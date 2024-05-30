@@ -77,7 +77,7 @@
     "comments": {
       "patterns": [
         {
-          "name": "comment.line.gleam",
+          "name": "comment.line.aiken",
           "match": "//.*"
         }
       ]
