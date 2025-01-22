@@ -23,7 +23,7 @@
       "patterns": [
         {
           "name": "keyword.control.aiken",
-          "match": "\\b(if|else|when|is|fn|use|let|pub|type|opaque|const|todo|expect|test|trace|fail|validator|and|or|as|via)\\b"
+          "match": "\\b(if|else|when|is|fn|use|let|pub|type|opaque|const|todo|expect|test|bench|trace|fail|validator|and|or|as|via)\\b"
         },
         {
           "name": "keyword.operator.arrow.aiken",
