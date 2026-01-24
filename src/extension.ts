@@ -7,12 +7,26 @@ import {
   ServerOptions,
   TransportKind,
 } from "vscode-languageclient/node";
+import { AikenDefinitionProvider } from "./definitionProvider";
+import { AikenHoverProvider } from "./hoverProvider";
 
 let client: LanguageClient | undefined;
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-export function activate(_context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext) {
+  // Register client-side providers
+  context.subscriptions.push(
+    vscode.languages.registerDefinitionProvider(
+      { scheme: "file", language: "aiken" },
+      new AikenDefinitionProvider()
+    ),
+    vscode.languages.registerHoverProvider(
+      { scheme: "file", language: "aiken" },
+      new AikenHoverProvider()
+    )
+  );
+
   let clientOptions: LanguageClientOptions = {
     documentSelector: [{ scheme: "file", language: "aiken" }],
     synchronize: {
