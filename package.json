@@ -1,106 +1,107 @@
 {
-  "name": "aiken",
-  "displayName": "Aiken",
-  "description": "Aiken language support for Visual Studio Code",
-  "version": "1.0.11",
-  "publisher": "txpipe",
-  "icon": "images/aiken.png",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/txpipe/vscode-aiken"
-  },
-  "engines": {
-    "vscode": "^1.52.0"
-  },
-  "categories": [
-    "Programming Languages",
-    "Formatters"
-  ],
-  "contributes": {
-    "languages": [
-      {
-        "id": "aiken",
-        "aliases": [
-          "Aiken",
-          "aiken"
-        ],
-        "extensions": [
-          ".ak"
-        ],
-        "configuration": "./configs/aiken-configuration.json",
-        "icon": {
-          "light": "./images/aiken.png",
-          "dark": "./images/aiken.png"
-        }
-      },
-      {
-        "id": "uplc",
-        "aliases": [
-          "Untyped Plutus Core",
-          "uplc"
-        ],
-        "extensions": [
-          ".uplc"
-        ],
-        "configuration": "./configs/uplc-configuration.json",
-        "icon": {
-          "light": "./images/plutus.png",
-          "dark": "./images/plutus.png"
-        }
-      }
-    ],
-    "grammars": [
-      {
-        "language": "aiken",
-        "scopeName": "source.aiken",
-        "path": "./syntaxes/aiken.tmLanguage.json"
-      },
-      {
-        "language": "uplc",
-        "scopeName": "source.uplc",
-        "path": "./syntaxes/uplc.tmLanguage.json"
-      }
-    ],
-    "configurationDefaults": {
-      "[aiken]": {
-        "editor.formatOnSave": true
-      },
-      "[uplc]": {
-        "editor.formatOnSave": true
-      }
-    }
-  },
-  "activationEvents": [
-    "onLanguage:aiken",
-    "onLanguage:uplc"
-  ],
-  "main": "./out/extension.js",
-  "scripts": {
-    "vscode:prepublish": "npm run package",
-    "build": "vsce package",
-    "dev": "webpack --mode development --watch",
-    "compile": "webpack --mode development",
-    "package": "webpack --mode production --devtool hidden-source-map",
-    "lint": "eslint src --ext ts"
-  },
-  "devDependencies": {
-    "@types/glob": "^8.0.0",
-    "@types/mocha": "^10.0.0",
-    "@types/node": "16.x",
-    "@types/vscode": "^1.52.0",
-    "@typescript-eslint/eslint-plugin": "^5.42.0",
-    "@typescript-eslint/parser": "^5.42.0",
-    "@vscode/test-electron": "^2.2.0",
-    "eslint": "^8.26.0",
-    "glob": "^8.0.3",
-    "mocha": "^10.1.0",
-    "ts-loader": "^9.4.1",
-    "typescript": "^4.8.4",
-    "vsce": "^2.14.0",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^4.10.0"
-  },
-  "dependencies": {
-    "vscode-languageclient": "^8.0.2"
-  }
+	"name": "aiken",
+	"displayName": "Aiken",
+	"description": "Aiken language support for Visual Studio Code",
+	"version": "1.0.11",
+	"publisher": "txpipe",
+	"icon": "images/aiken.png",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/txpipe/vscode-aiken"
+	},
+	"engines": {
+		"vscode": "^1.52.0"
+	},
+	"categories": [
+		"Programming Languages",
+		"Formatters"
+	],
+	"contributes": {
+		"languages": [
+			{
+				"id": "aiken",
+				"aliases": [
+					"Aiken",
+					"aiken"
+				],
+				"extensions": [
+					".ak"
+				],
+				"configuration": "./configs/aiken-configuration.json",
+				"icon": {
+					"light": "./images/aiken.png",
+					"dark": "./images/aiken.png"
+				}
+			},
+			{
+				"id": "uplc",
+				"aliases": [
+					"Untyped Plutus Core",
+					"uplc"
+				],
+				"extensions": [
+					".uplc"
+				],
+				"configuration": "./configs/uplc-configuration.json",
+				"icon": {
+					"light": "./images/plutus.png",
+					"dark": "./images/plutus.png"
+				}
+			}
+		],
+		"grammars": [
+			{
+				"language": "aiken",
+				"scopeName": "source.aiken",
+				"path": "./syntaxes/aiken.tmLanguage.json"
+			},
+			{
+				"language": "uplc",
+				"scopeName": "source.uplc",
+				"path": "./syntaxes/uplc.tmLanguage.json"
+			}
+		],
+		"configurationDefaults": {
+			"[aiken]": {
+				"editor.formatOnSave": true
+			},
+			"[uplc]": {
+				"editor.formatOnSave": true
+			}
+		}
+	},
+	"activationEvents": [
+		"onLanguage:aiken",
+		"onLanguage:uplc",
+		"workspaceContains:**/aiken.toml"
+	],
+	"main": "./out/extension.js",
+	"scripts": {
+		"vscode:prepublish": "npm run package",
+		"build": "vsce package",
+		"dev": "webpack --mode development --watch",
+		"compile": "webpack --mode development",
+		"package": "webpack --mode production --devtool hidden-source-map",
+		"lint": "eslint src --ext ts"
+	},
+	"devDependencies": {
+		"@types/glob": "^8.0.0",
+		"@types/mocha": "^10.0.0",
+		"@types/node": "16.x",
+		"@types/vscode": "^1.52.0",
+		"@typescript-eslint/eslint-plugin": "^5.42.0",
+		"@typescript-eslint/parser": "^5.42.0",
+		"@vscode/test-electron": "^2.2.0",
+		"eslint": "^8.26.0",
+		"glob": "^8.0.3",
+		"mocha": "^10.1.0",
+		"ts-loader": "^9.4.1",
+		"typescript": "^4.8.4",
+		"vsce": "^2.14.0",
+		"webpack": "^5.75.0",
+		"webpack-cli": "^4.10.0"
+	},
+	"dependencies": {
+		"vscode-languageclient": "^9.0.1"
+	}
 }
