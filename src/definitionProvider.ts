@@ -25,6 +25,7 @@ export class AikenDefinitionProvider implements vscode.DefinitionProvider {
 
 		// 2. I check imports
 		const importedDef = await this.findImportedDefinition(document, word)
+		console.log(`DEBUG: Imported definition found for ${word} at line ${importedDef?.range.start.line}`)
 		if (importedDef) {
 			definitions.push(importedDef)
 			return definitions
@@ -88,14 +89,27 @@ export class AikenDefinitionProvider implements vscode.DefinitionProvider {
 		return undefined
 	}
 
+	private getProjectRoot(documentUri: vscode.Uri): string | undefined {
+		let currentDir = path.dirname(documentUri.fsPath)
+		while (currentDir !== path.dirname(currentDir)) {
+			if (fs.existsSync(path.join(currentDir, 'aiken.toml'))) {
+				return currentDir
+			}
+			currentDir = path.dirname(currentDir)
+		}
+
+		const workspaceFolder = vscode.workspace.getWorkspaceFolder(documentUri)
+		return workspaceFolder?.uri.fsPath
+	}
+
 	private async findImportedDefinition(
 		document: vscode.TextDocument,
 		name: string
 	): Promise<vscode.Location | undefined> {
 		const text = document.getText()
 		const lines = text.split('\n')
-		const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri)
-		if (!workspaceFolder) return undefined
+		const projectRoot = this.getProjectRoot(document.uri)
+		if (!projectRoot) return undefined
 
 		for (let i = 0; i < lines.length; i++) {
 			let line = lines[i].trim()
@@ -133,7 +147,7 @@ export class AikenDefinitionProvider implements vscode.DefinitionProvider {
 						const imports = content.split(',').map(s => s.trim())
 
 						if (imports.includes(name)) {
-							return await this.resolveModuleDefinition(workspaceFolder.uri.fsPath, modulePath, name)
+							return await this.resolveModuleDefinition(projectRoot, modulePath, name)
 						}
 					}
 				} else {
@@ -141,7 +155,7 @@ export class AikenDefinitionProvider implements vscode.DefinitionProvider {
 					const modulePath = currentImport.substring(4, lastDot).trim()
 					const symbol = currentImport.substring(lastDot + 1).trim()
 					if (symbol === name) {
-						return await this.resolveModuleDefinition(workspaceFolder.uri.fsPath, modulePath, name)
+						return await this.resolveModuleDefinition(projectRoot, modulePath, name)
 					}
 				}
 			}
