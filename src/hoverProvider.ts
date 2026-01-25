@@ -12,10 +12,8 @@ export class AikenHoverProvider implements vscode.HoverProvider {
         if (!wordRange) return;
 
         const word = document.getText(wordRange);
-        console.log(">>> / hoverProvider.ts:15 / word:", word);
-
         
-        // 1. Check local definitions first
+        // 1. I check local definitions first
         const localDef = this.findDefinitionInText(document.getText(), word);
         if (localDef) {
             const contents: (vscode.MarkdownString | string)[] = [];
@@ -26,7 +24,7 @@ export class AikenHoverProvider implements vscode.HoverProvider {
             return new vscode.Hover(contents);
         }
 
-        // 2. Check imports
+        // 2. I check imports
         const importedDef = await this.findImportedDefinition(document, word);
         if (importedDef) {
             const contents: (vscode.MarkdownString | string)[] = [];
@@ -34,6 +32,12 @@ export class AikenHoverProvider implements vscode.HoverProvider {
                 contents.push(new vscode.MarkdownString(importedDef.docs));
             }
             contents.push(new vscode.MarkdownString().appendCodeblock(importedDef.code, 'aiken'));
+            // I add file path
+            if (importedDef.filePath) {
+                const pathMd = new vscode.MarkdownString();
+                pathMd.appendMarkdown(`*${importedDef.filePath}*`);
+                contents.push(pathMd);
+            }
             return new vscode.Hover(contents);
         }
 
@@ -42,8 +46,16 @@ export class AikenHoverProvider implements vscode.HoverProvider {
 
     private findDefinitionInText(text: string, name: string): { docs: string, code: string } | undefined {
         const lines = text.split('\n');
-        // Match definitions: type Name, pub type Name, fn name, validator name, let name, expect name
-        const regex = new RegExp(`^\\s*(pub\\s+)?(type|fn|validator|opaque\\s+type|let|expect)\\s+${name}\\b`);
+        
+        // I determine regex based on casing to avoid false positives (e.g. `let Constructor` destructuring)
+        const isTypeOrConstructor = /^[A-Z]/.test(name);
+        let regex: RegExp;
+
+        if (isTypeOrConstructor) {
+             regex = new RegExp(`^\\s*(pub\\s+)?(type|opaque\\s+type)\\s+${name}\\b`);
+        } else {
+             regex = new RegExp(`^\\s*(pub\\s+)?(fn|validator|let|expect)\\s+${name}\\b`);
+        }
         
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
@@ -57,7 +69,7 @@ export class AikenHoverProvider implements vscode.HoverProvider {
         return undefined;
     }
 
-    private async findImportedDefinition(document: vscode.TextDocument, name: string): Promise<{ docs: string, code: string } | undefined> {
+    private async findImportedDefinition(document: vscode.TextDocument, name: string): Promise<{ docs: string, code: string, filePath?: string } | undefined> {
         const text = document.getText();
         const lines = text.split('\n');
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
@@ -68,21 +80,21 @@ export class AikenHoverProvider implements vscode.HoverProvider {
             if (!line.startsWith('use ')) continue;
 
             let currentImport = line;
-            // Handle multi-line imports: if it opens a brace but doesn't close it
+            // I handle multi-line imports: if it opens a brace but doesn't close it
             let openBraces = (currentImport.match(/{/g) || []).length;
             let closeBraces = (currentImport.match(/}/g) || []).length;
 
             while (openBraces > closeBraces && i + 1 < lines.length) {
                 i++;
                 const nextLine = lines[i].trim();
-                // Skip comments if interspersed? Aiken format usually puts them on separate lines or inline. 
-                // We'll just concatenate for parsing purposes.
+                // I skip comments if interspersed? Aiken format usually puts them on separate lines or inline. 
+                // I'll just concatenate for parsing purposes.
                 currentImport += ' ' + nextLine;
                 openBraces += (nextLine.match(/{/g) || []).length;
                 closeBraces += (nextLine.match(/}/g) || []).length;
             }
 
-            const useParts = currentImport.substring(4).split('.'); // remove 'use '
+            const useParts = currentImport.substring(4).split('.'); // I remove 'use '
             
             if (useParts.length === 1) {
                 // Case: use path/to/module
@@ -93,12 +105,12 @@ export class AikenHoverProvider implements vscode.HoverProvider {
                 if (moduleName === name) {
                     // Hovering over the module alias itself? 
                     // Or maybe user is using Module.function?
-                    // For now, let's focus on symbols imported via braces.
-                    // If the user uses `module.Symbol`, we might want to handle that too, but let's stick to the request.
+                    // For now, I'll focus on symbols imported via braces.
+                    // If the user uses `module.Symbol`, I might want to handle that too, but let's stick to the request.
                 }
             } else if (useParts.length >= 2) {
                  // It might be `use cardano/transaction.{ ... }`
-                 // Re-join just in case split('.') broke something inside braces (unlikely for valid syntax but safe)
+                 // I re-join just in case split('.') broke something inside braces (unlikely for valid syntax but safe)
                  // Actually parsing `path.to.module.{A,B}` is better done by regex.
                  
                  const braceStart = currentImport.indexOf('{');
@@ -129,14 +141,14 @@ export class AikenHoverProvider implements vscode.HoverProvider {
         return undefined;
     }
 
-    private async resolveModuleDefinition(rootPath: string, modulePath: string, formattedName: string): Promise<{ docs: string, code: string } | undefined> {
+    private async resolveModuleDefinition(rootPath: string, modulePath: string, formattedName: string): Promise<{ docs: string, code: string, filePath?: string } | undefined> {
          // Construct full file path. 
          // Strategy:
          // 1. Check local lib/
          // 2. Check build/packages/*/lib/
-
-         // modulePath is like "cardano/address"
-         
+         // 3. Check build/packages/*/lib/validators/
+         // modulePath is like "cardano/address" 
+         // TODO: Need to handle in case `use aiken/collection/dict` without Type/Fnc
          const possiblePaths = [
              path.join(rootPath, 'lib', `${modulePath}.ak`),
              path.join(rootPath, 'validators', `${modulePath}.ak`),
@@ -145,7 +157,7 @@ export class AikenHoverProvider implements vscode.HoverProvider {
          ];
 
          // Add standard lib paths
-         // We construct a search for "build/packages/*/lib/modulePath.ak"
+         // I construct a search for "build/packages/*/lib/modulePath.ak"
          // scanning directory manually since glob might be slow or extra dep.
          
          const buildDir = path.join(rootPath, 'build', 'packages');
@@ -166,12 +178,36 @@ export class AikenHoverProvider implements vscode.HoverProvider {
                  const fileContent = fs.readFileSync(fullPath, 'utf8');
                  // For imported files, we also use extractDefinitionWithDocs finding lines first
                  const lines = fileContent.split('\n');
-                 const regex = new RegExp(`^\\s*(pub\\s+)?(type|fn|validator|opaque\\s+type)\\s+${formattedName}\\b`);
-                 for (let i = 0; i < lines.length; i++) {
-                     if (regex.test(lines[i])) {
-                         return this.extractDefinitionWithDocs(lines, i);
-                     }
-                 }
+                  const isTypeOrConstructor = /^[A-Z]/.test(formattedName);
+                  
+                  for (let i = 0; i < lines.length; i++) {
+                      const line = lines[i];
+                      const trimmed = line.trim();
+                      if (trimmed.startsWith('//')) continue;
+                      
+                      let matched = false;
+                      
+                      if (isTypeOrConstructor) {
+                           // 1. I try strict Type definition
+                           const typeRegex = new RegExp(`^\\s*(pub\\s+)?(type|opaque\\s+type)\\s+${formattedName}\\b`);
+                           if (typeRegex.test(line)) matched = true;
+                           
+                           // 2. Fallback: I use Constructor definition (indented)
+                           if (!matched) {
+                               const consRegex = new RegExp(`^\\s+${formattedName}\\b`);
+                               if (consRegex.test(line)) matched = true;
+                           }
+                      } else {
+                           // Fn/Var
+                           const fnRegex = new RegExp(`^\\s*(pub\\s+)?(fn|validator|let|expect)\\s+${formattedName}\\b`);
+                           if (fnRegex.test(line)) matched = true;
+                      }
+                      
+                      if (matched) {
+                         const def = this.extractDefinitionWithDocs(lines, i);
+                         return { ...def, filePath: fullPath };
+                      }
+                  }
              }
          }
 
@@ -179,13 +215,13 @@ export class AikenHoverProvider implements vscode.HoverProvider {
     }
 
     private extractDefinitionWithDocs(lines: string[], definitionIndex: number): { docs: string, code: string } {
-        // 1. Extract docs (look backwards)
+        // 1. Extract docs (I look backwards)
         const docLines = [];
         let j = definitionIndex - 1;
         while (j >= 0) {
             const prevLine = lines[j].trim();
             if (prevLine.startsWith('///')) {
-                // Remove '///' and leading space
+                // I remove '///' and leading space
                 docLines.unshift(prevLine.substring(3).trimStart());
             } else if (prevLine.startsWith('//')) {
                  // Regular comments might not be docs, but let's include if immediately adjacent?
@@ -205,7 +241,7 @@ export class AikenHoverProvider implements vscode.HoverProvider {
             j--;
         }
 
-        // 2. Extract code block and strip internal comments
+        // 2. Extract code block and I strip internal comments
         const codeBlock = this.extractDefinitionBlock(lines, definitionIndex);
         
         return {
@@ -220,32 +256,32 @@ export class AikenHoverProvider implements vscode.HoverProvider {
             let extracted: string[] = [];
             let openBraces = 0;
             
-            // Re-scan start line to handle cases like `pub type Foo {` correctly if we start loop from it
+            // I re-scan start line to handle cases like `pub type Foo {` correctly if I start loop from it
             // actually logic below handles line j=startIndex.
             
             for (let j = startIndex; j < lines.length; j++) {
                 const line = lines[j];
                 const trimmed = line.trim();
 
-                // Skip documentation comments inside the block
+                // I skip documentation comments inside the block
                 if (trimmed.startsWith('///')) continue;
                 // Maybe skip regular comments too? The user request specifically mentioned `///` ones inside `pub type`.
                 // "fix: show comment as description detail like typescript"
                 // The provided example had `/// > [!IMPORTANT]` inside fields.
-                // Assuming we want to strip all `///` lines from the code view.
+                // I assume I want to strip all `///` lines from the code view.
                 
                 extracted.push(line);
                 
                 openBraces += (line.match(/{/g) || []).length;
                 openBraces -= (line.match(/}/g) || []).length;
                 
-                if (openBraces <= 0 && j >= startIndex) break; // j>=startIndex ensures we processed at least one line (the start line)
+                if (openBraces <= 0 && j >= startIndex) break; // j>=startIndex ensures I processed at least one line (the start line)
                 if (extracted.length >= 200) break; // Safety limit
             }
             return extracted.join('\n');
         } else {
             // function signature might span multiple lines if args are broken up
-            // naive approach: take lines until we see '->' and return type, or '{' or just few lines.
+            // naive approach: I take lines until I see '->' and return type, or '{' or just few lines.
             // For simple types/functions, 1-3 lines is usually enough if not a block.
             return lines.slice(startIndex, Math.min(startIndex + 5, lines.length)).join('\n');
         }
