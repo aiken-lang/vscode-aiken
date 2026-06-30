@@ -1,0 +1,34 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "npm: build",
+      "type": "npm",
+      "script": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: watch",
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "webpack",
+        "pattern": [
+          {
+            "regexp": ".*",
+            "kind": "file",
+            "file": 1,
+            "message": 1
+          }
+        ],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "compiled successfully"
+        }
+      }
+      // "problemMatcher": "$tsc-watch"
+    }
+  ]
+}
