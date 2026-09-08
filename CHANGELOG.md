@@ -1,5 +1,11 @@
 # Changelog
 
+## [v1.0.12] - 2026-09-08
+
+### Added
+
+- go-to-definition for types and constructors, as a bundled client-side fallback for when the language server does not resolve them
+
 ## [v1.0.11] - 2024-05-30
 
 - added some keywords to uplc grammar

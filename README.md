@@ -8,6 +8,7 @@ Aiken language support for Visual Studio Code
 
 - syntax highlighting
 - formatting
+- go to definition for types and constructors (client-side fallback when the language server does not resolve them)
 
 ## Requirements
 
