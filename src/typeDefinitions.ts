@@ -27,6 +27,8 @@ export interface ModuleImports {
   moduleAliases: Map<string, string>;
   /** `use foo.{Bar as Baz}` -> Baz -> { module, name: Bar } */
   importedNames: Map<string, ImportedName>;
+  /** `use foo.{bar as baz}` -> baz -> { module, name: bar } */
+  importedValues: Map<string, ImportedName>;
 }
 
 export type TypeRef =
@@ -226,6 +228,7 @@ function stripLeadingWhitespaceAndDocs(line: string): string {
 export function extractModuleImports(text: string): ModuleImports {
   const moduleAliases = new Map<string, string>();
   const importedNames = new Map<string, ImportedName>();
+  const importedValues = new Map<string, ImportedName>();
 
   let match: RegExpExecArray | null;
   USE_REGEX.lastIndex = 0;
@@ -244,17 +247,16 @@ export function extractModuleImports(text: string): ModuleImports {
 
     if (braces) {
       for (const item of parseBraces(braces)) {
-        if (/^[A-Z]/.test(item.original)) {
-          importedNames.set(item.alias ?? item.original, {
-            module: modulePath,
-            name: item.original,
-          });
-        }
+        const target = /^[A-Z]/.test(item.original) ? importedNames : importedValues;
+        target.set(item.alias ?? item.original, {
+          module: modulePath,
+          name: item.original,
+        });
       }
     }
   }
 
-  return { moduleAliases, importedNames };
+  return { moduleAliases, importedNames, importedValues };
 }
 
 export function moduleForUri(

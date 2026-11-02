@@ -4,6 +4,6 @@
     "outDir": "out-test",
     "sourceMap": false
   },
-  "include": ["src/typeDefinitions.ts", "src/typeDefinitions.test.ts"],
+  "include": ["src/typeDefinitions.ts", "src/typeDefinitions.test.ts", "src/constants.ts", "src/constants.test.ts"],
   "exclude": ["node_modules", ".vscode-test"]
 }

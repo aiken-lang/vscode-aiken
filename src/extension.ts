@@ -16,6 +16,12 @@ import {
   tokenAtPosition,
   TypeDecl,
 } from "./typeDefinitions";
+import {
+  ConstantDecl,
+  constantRefAtPosition,
+  extractConstants,
+  isLocallyBound,
+} from "./constants";
 
 let client: LanguageClient | undefined;
 
@@ -62,6 +68,10 @@ export function activate(_context: vscode.ExtensionContext) {
       { language: "aiken", scheme: "file" },
       new AikenTypeDefinitionProvider(typeIndex),
     ),
+    vscode.languages.registerHoverProvider(
+      { language: "aiken", scheme: "file" },
+      new AikenConstantHoverProvider(typeIndex),
+    ),
     vscode.workspace.onDidSaveTextDocument((document) => {
       if (document.languageId === "aiken" && document.uri.scheme === "file") {
         typeIndex.reset();
@@ -82,6 +92,7 @@ function workspaceRoots(): string[] {
 class AikenTypeIndex {
   private types = new Map<string, Map<string, vscode.Location[]>>();
   private constructors = new Map<string, Map<string, vscode.Location[]>>();
+  private constants = new Map<string, ConstantDecl[]>();
   private built = false;
   private building: Promise<void> | undefined;
   private generation = 0;
@@ -92,6 +103,7 @@ class AikenTypeIndex {
     this.building = undefined;
     this.types.clear();
     this.constructors.clear();
+    this.constants.clear();
   }
 
   async ensure(): Promise<void> {
@@ -121,6 +133,7 @@ class AikenTypeIndex {
 
     const types = new Map<string, Map<string, vscode.Location[]>>();
     const constructors = new Map<string, Map<string, vscode.Location[]>>();
+    const constants = new Map<string, ConstantDecl[]>();
 
     for (const uri of files) {
       const moduleName = moduleForUri(uri.fsPath, roots);
@@ -137,6 +150,7 @@ class AikenTypeIndex {
 
       recordLocations(types, moduleName, extractTypeDeclarations(text), uri);
       recordLocations(constructors, moduleName, extractTypeConstructors(text), uri);
+      constants.set(moduleName, extractConstants(text));
     }
 
     if (generation !== this.generation) {
@@ -145,8 +159,15 @@ class AikenTypeIndex {
 
     this.types = types;
     this.constructors = constructors;
+    this.constants = constants;
     this.built = true;
     this.building = undefined;
+  }
+
+  publicConstant(moduleName: string, name: string): ConstantDecl | undefined {
+    return this.constants
+      .get(moduleName)
+      ?.find((constant) => constant.isPublic && constant.name === name);
   }
 
   locationsFor(moduleName: string, name: string): vscode.Location[] | undefined {
@@ -301,6 +322,55 @@ class AikenTypeDefinitionProvider implements vscode.DefinitionProvider {
     const results = dedupeLocations([...inCurrentModule, ...fromIndex]);
     return results.length > 0 ? results : undefined;
   }
+}
+
+class AikenConstantHoverProvider implements vscode.HoverProvider {
+  constructor(private readonly index: AikenTypeIndex) {}
+
+  async provideHover(
+    document: vscode.TextDocument,
+    position: vscode.Position,
+  ): Promise<vscode.Hover | undefined> {
+    const text = document.getText();
+    const ref = constantRefAtPosition(
+      document.lineAt(position.line).text,
+      position.character,
+      extractModuleImports(text),
+    );
+    if (!ref) {
+      return undefined;
+    }
+
+    const boundName =
+      ref.kind === "local"
+        ? ref.name
+        : ref.kind === "imported"
+          ? ref.localName
+          : ref.qualifier;
+    if (isLocallyBound(text, position.line, boundName)) {
+      return undefined;
+    }
+
+    if (ref.kind === "local") {
+      const constant = extractConstants(text).find((c) => c.name === ref.name);
+      return constant && constantHover(constant);
+    }
+
+    try {
+      await this.index.ensure();
+    } catch (err) {
+      console.error("[constant-hover] index build failed", err);
+      return undefined;
+    }
+    const constant = this.index.publicConstant(ref.module, ref.name);
+    return constant && constantHover(constant);
+  }
+}
+
+function constantHover(constant: ConstantDecl): vscode.Hover {
+  const contents = new vscode.MarkdownString();
+  contents.appendCodeblock(constant.source, "aiken");
+  return new vscode.Hover(contents);
 }
 
 function resolveInModule(

@@ -1,5 +1,11 @@
 # Changelog
 
+## [v1.0.13] - 2026-11-02
+
+### Added
+
+- hovering over a constant shows its declaration, including constants imported from other modules of the project
+
 ## [v1.0.12] - 2026-09-08
 
 ### Added
